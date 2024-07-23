@@ -8,6 +8,8 @@ using Rainbow
 # This class is used to make Calendar to which we can add,delete,edit and remove event
 class Calendar
   include Parsedate
+  attr_reader :calendar_hash
+
   def initialize
     @calendar_hash = Hash.new { |hash, key| hash[key] = Hash.new { |has, ke| has[ke] = Hash.new { |h, k| h[k] = [] } } }
   end
@@ -42,10 +44,14 @@ class Calendar
     end
   end
 
-  def edit_exist_event(date,old_event_name,new_event_name)
-    @calendar_hash[date.year][month_name][date.day].map! do |event|
-      event == old_event_name ? new_event_name : event
-      puts "Event '#{old_event_name}' updated to '#{new_event_name}' on #{date.year}-#{month_name}-#{date.day}."
+  def edit_exist_event(date, old_event_name, new_event_name, month_name, events)
+    events.map! do |event|
+      if event == old_event_name
+        puts "Event '#{old_event_name}' updated to '#{new_event_name}' on #{date.year}-#{month_name}-#{date.day}."
+        new_event_name
+      else
+        event
+      end
     end
   end
 
@@ -55,7 +61,7 @@ class Calendar
     events = @calendar_hash[date.year][month_name][date.day]
 
     if events.include?(old_event_name)
-      edit_exist_event(date, old_event_name, new_event_name)
+      edit_exist_event(date, old_event_name, new_event_name, month_name, events)
     else
       puts "Event '#{old_event_name}' does not exist on #{date.year}-#{month_name}-#{date.day}."
     end
@@ -90,12 +96,12 @@ class Calendar
       end
     end
   end
- 
+
   def printing_month_view(month_name, last_day, date, calendar_days)
     # week_days.each { |day| puts "#{day}" }
     (1..last_day.day).each do |day|
       event_count = @calendar_hash[date.year][month_name][day].size
-      day_str = event_count.positive? ? "#{day.to_s.rjust(11)}(#{event_count})".red : day.to_s.rjust(8).green
+      day_str = event_count.positive? ? "#{day.to_s.rjust(8)}(#{event_count})".red : day.to_s.rjust(8).green
       calendar_days << day_str
     end
   end
@@ -110,7 +116,7 @@ class Calendar
     date = parse_date(date)
     first_day, last_day = find_first_and_last_day_of_month(date)
     month_name = date.strftime('%B')
-    puts '----------------------------------------------------------------------'.green
+    puts '------------------------------------------------------------------------------------ '
     puts "\tSu\t Mo\t Tu\t We\t Th\t Fr\t Sa".blue
     start_index = first_day.wday
     print '   ' * 3

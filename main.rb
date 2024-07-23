@@ -27,11 +27,12 @@ def false_event_input(event_name)
   event_name
 end
 
-puts 'Calendar Application'.center(100).green
+puts 'Calendar Application'.center(150).green
 
 exit_flag = false
 
 while exit_flag == false
+  puts '---------------------------------------------------------------------------------------------------------------'
   puts '1. Add Event'.yellow
   puts '2. Remove Event'.yellow
   puts '3. Edit Event'.yellow
@@ -39,7 +40,8 @@ while exit_flag == false
   puts '5. Print Events in Month'.yellow
   puts '6. Print Month View'.yellow
   puts '7. Exit'.red
-  print 'Choose an option: '.yellow
+  puts '---------------------------------------------------------------------------------------------------------------'
+  print 'Choose an option: '.blue
   option = gets.chomp
 
   begin
@@ -90,19 +92,31 @@ while exit_flag == false
 
     when 5
       ErrorHandler.handle_print_month_event_error do
-        puts 'Enter Only Month and Year'
+        puts 'Enter Only Month and Year ( YYYY-MM ) '
         date = gets.chomp
         date << '-1'
-        date = false_date_input(date)
+        flag = UserInputValidation.check_date_format?(date)
+        while flag == false
+          puts 'Input Date in Correct Format!!'
+          date = gets.chomp
+          date << '-1'
+          flag = UserInputValidation.check_date_format?(date)
+        end
         c1.print_month_event_detail(date)
       end
 
     when 6
       ErrorHandler.handle_print_month_view_error do
-        puts 'Enter Only Month and Year'
+        puts 'Enter Only Month and Year  ( YYYY-MM ) '
         date = gets.chomp
         date << '-1'
-        date = false_date_input(date)
+        flag = UserInputValidation.check_date_format?(date)
+        while flag == false
+          puts 'Input Date in Correct Format!!'
+          date = gets.chomp
+          date << '-1'
+          flag = UserInputValidation.check_date_format?(date)
+        end
         c1.month_view(date)
       end
 
