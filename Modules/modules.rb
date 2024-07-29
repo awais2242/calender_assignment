@@ -11,7 +11,6 @@ module UserInputValidation
 
   def self.empty_event?(event_name)
     return false if event_name.nil? || event_name.strip.empty?
-
     true
   end
 end
